@@ -15,10 +15,10 @@ def sensms():
         ruleName = req_data['ruleName']
         state = req_data['state']
         title = req_data['title']
-        api = KavenegarAPI('4F4B3149545073387678386E3166676E6A73377175556B4E4E6E385265364148')
+        api = KavenegarAPI('TOKEN')
         params = {
-            'sender': '10004404044000',#optional
-            'receptor': '09332629314',#multiple mobile number, split by comma
+            'sender': 'senderNUMBER',#optional
+            'receptor': '',#multiple mobile number, split by comma
             'message': "dashboardId = {} \nmessageg = {} \nruleName = {} \nstate = {} \ntitle ={}".format(dashboardId, messageg, ruleName, state, title)
         }
         response = api.sms_send(params)
