@@ -1,0 +1,13 @@
+version: "3.8"
+
+
+networks:
+  sendsms:
+services:
+  sendsms:
+    build:
+      context: .
+    ports:
+      - 8088:8088
+    networks:
+      - sendsms
