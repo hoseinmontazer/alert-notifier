@@ -6,4 +6,4 @@ change Token in sendsms.py
 
 run with docker-compose up -d
 
-![Screenshot] (./screenshot.png)
+![Screenshot](./screenshot.png)
