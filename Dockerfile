@@ -8,5 +8,5 @@ RUN pip install flask requests
 
 EXPOSE 80
 
-CMD ["python", "alert-notifier"]
+CMD ["python", "alert-notifier.py"]
 

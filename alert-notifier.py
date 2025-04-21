@@ -43,7 +43,6 @@ def sendmsg():
         state = req_data.get('state')
         message = req_data.get('message')
         title = req_data.get('title')
-        receptors = req_data.get('receptors')
 
         if not receptors:
             receptors = os.environ.get("RECEPTORS", "").split(',')
@@ -53,6 +52,8 @@ def sendmsg():
 
         api_key = os.environ.get("KAVE_TOKEN")
         sender = os.environ.get("KAVE_SENDER")
+        receptors = os.environ.get("RECEPTORS")
+
 
         url = f"https://api.kavenegar.com/v1/{api_key}/sms/send.json"
         payload = {
