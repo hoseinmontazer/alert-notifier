@@ -1,34 +1,76 @@
-from flask import Flask,request
-from kavenegar import *
-import sys
-
+from http.client import HTTPException
+from flask import Flask, request, jsonify
+import os
+import requests
 
 app = Flask(__name__)
-@app.route('/sendsms',methods=['POST'])
-def sensms():
+
+@app.route('/sendtel', methods=['POST'])
+def sendtel():
     try:
-        msg = request.get_json()
-        print(msg)
+        TOKEN = os.environ.get("TELEGRAM_TOKEN")
+        chat_id = os.environ.get("TELEGRAM_CHATID")
         req_data = request.get_json()
-        dashboardId = req_data['dashboardId']
-        messageg = req_data['message']
-        ruleName = req_data['ruleName']
-        state = req_data['state']
-        title = req_data['title']
-        api = KavenegarAPI('TOKEN')
-        params = {
-            'sender': 'senderNUMBER',#optional
-            'receptor': '',#multiple mobile number, split by comma
-            'message': "dashboardId = {} \nmessageg = {} \nruleName = {} \nstate = {} \ntitle ={}".format(dashboardId, messageg, ruleName, state, title)
+
+        print("Received Telegram alert:", req_data)
+
+        state = req_data.get('state')
+        messages = req_data.get('message')
+        title = req_data.get('title')
+
+        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        payload = {
+            "chat_id": chat_id,
+            "text": f"title: {title}\nstate: {state}\nmessage: {messages}"
         }
-        response = api.sms_send(params)
-        return(response)
-    except APIException as e:
-        return(e)
+
+        print("Sending Telegram message...")
+        response = requests.post(url, json=payload)
+        print(response.json())
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
     except HTTPException as e:
-        return(e)
+        return jsonify({"http_error": str(e)})
 
-    #return "Hello World!"
+@app.route('/sendmsg', methods=['POST'])
+def sendmsg():
+    try:
+        req_data = request.get_json()
+
+        state = req_data.get('state')
+        message = req_data.get('message')
+        title = req_data.get('title')
+        receptors = req_data.get('receptors')
+
+        if not receptors:
+            receptors = os.environ.get("RECEPTORS", "").split(',')
+
+        if isinstance(receptors, str):
+            receptors = [receptors]
+
+        api_key = os.environ.get("KAVE_TOKEN")
+        sender = os.environ.get("KAVE_SENDER")
+
+        url = f"https://api.kavenegar.com/v1/{api_key}/sms/send.json"
+        payload = {
+            'receptor': ','.join(receptors),
+            'sender': sender,
+            'message': message
+        }
+
+        print("Sending Kavenegar SMS...")
+        response = requests.post(url, data=payload)
+        print(response.json())
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    except HTTPException as e:
+        return jsonify({"http_error": str(e)})
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8088)
-
+    app.run(host='0.0.0.0', port=80)

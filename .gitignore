@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+
+# Environment variables
+.env
+
+# Docker-related
+*.log
+docker-compose.override.yml
+db_home/
+superset_home/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Python egg info
+*.egg-info/
+*.egg
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/

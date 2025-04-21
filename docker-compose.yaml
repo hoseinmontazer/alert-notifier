@@ -1,13 +1,11 @@
-version: "3.8"
+version: '3.8'
 
-
-networks:
-  sendsms:
 services:
-  sendsms:
-    build:
-      context: .
+  alert-notifier:
+    build: .
+    container_name: alert-notifier
     ports:
-      - 8088:8088
-    networks:
-      - sendsms
+      - "8080:80"
+    restart: unless-stopped
+    env_file:
+      - .env
