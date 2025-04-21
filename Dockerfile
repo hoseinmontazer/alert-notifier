@@ -1,5 +1,12 @@
-FROM python:3
-ADD sendsms.py /
-RUN pip3 install flask
-RUN pip3 install kavenegar
-CMD [ "python3", "-u","./sendsms.py" ]
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install flask requests
+
+EXPOSE 80
+
+CMD ["python", "alert-notifier"]
+
