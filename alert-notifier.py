@@ -40,10 +40,13 @@ def sendmsg():
     try:
         req_data = request.get_json()
 
-        state = req_data.get('state')
-        message = req_data.get('message')
-        title = req_data.get('title')
+        state = req_data.get('state', 'unknown').upper()
+        title = req_data.get('title', 'No Title')
+        body = req_data.get('message', '')
 
+        message = f"[{state}] {title}: {body}"
+
+        receptors = req_data.get('receptors')
         if not receptors:
             receptors = os.environ.get("RECEPTORS", "").split(',')
 
@@ -52,8 +55,6 @@ def sendmsg():
 
         api_key = os.environ.get("KAVE_TOKEN")
         sender = os.environ.get("KAVE_SENDER")
-        receptors = os.environ.get("RECEPTORS")
-
 
         url = f"https://api.kavenegar.com/v1/{api_key}/sms/send.json"
         payload = {
@@ -62,16 +63,14 @@ def sendmsg():
             'message': message
         }
 
-        print("Sending Kavenegar SMS...")
+        print("Sending Kavenegar SMS:", payload)
         response = requests.post(url, data=payload)
-        print(response.json())
+        print("Response:", response.json())
 
         return jsonify({"status": "ok"})
 
     except Exception as e:
         return jsonify({"error": str(e)})
-    except HTTPException as e:
-        return jsonify({"http_error": str(e)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
